@@ -600,12 +600,12 @@ in
 
     isoImage.grubRootSearchFile = lib.mkOption {
       default = "/EFI/nixos-installer-image";
-      type = lib.types.addCheck (lib.types.strMatching "/EFI(/[A-Za-z0-9_+-][A-Za-z0-9._+-]*)+") (
+      type = lib.types.addCheck (lib.types.strMatching "/EFI/[A-Za-z0-9_+-][A-Za-z0-9._+-]*") (
         path: path != "/EFI/BOOT"
       );
       description = ''
         The path to the marker file used by GRUB to locate the ISO filesystem.
-        The path must be a normalized path under {file}`/EFI`, using only
+        The path must be directly under {file}`/EFI`, using only
         characters that do not require quoting as a GRUB argument.
       '';
     };

@@ -198,6 +198,7 @@ in
     test ${lib.escapeShellArg isoConfig.isoImage.grubRootSearchFile} = /EFI/nixos-installer-image
     test ${lib.boolToString (grubRootSearchFileAccepted "/not-efi/marker")} = false
     test ${lib.boolToString (grubRootSearchFileAccepted "/EFI/BOOT")} = false
+    test ${lib.boolToString (grubRootSearchFileAccepted "/EFI/BOOT/grub-theme/marker")} = false
     test -e ${customEfiDir}/custom-nixos-installer-image
     grep -F 'search --set=root --file ${customGrubRootSearchFile}' ${customEfiDir}/BOOT/grub.cfg
     touch $out
