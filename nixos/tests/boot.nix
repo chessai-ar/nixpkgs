@@ -92,14 +92,15 @@ let
   customEfiDir =
     (lib.findFirst (entry: entry.target == "/EFI") null customIsoConfig.isoImage.contents).source;
 
-  invalidGrubRootSearchFileAccepted =
+  grubRootSearchFileAccepted =
+    grubRootSearchFile:
     (builtins.tryEval (
       (import ../lib/eval-config.nix {
         system = null;
         modules = [
           ../modules/installer/cd-dvd/installation-cd-minimal.nix
           {
-            isoImage.grubRootSearchFile = "/not-efi/marker";
+            isoImage.grubRootSearchFile = grubRootSearchFile;
             nixpkgs.pkgs = pkgs;
           }
         ];
@@ -195,7 +196,8 @@ in
 {
   isoGrubRootSearchFile = pkgs.runCommand "iso-grub-root-search-file" { } ''
     test ${lib.escapeShellArg isoConfig.isoImage.grubRootSearchFile} = /EFI/nixos-installer-image
-    test ${lib.boolToString invalidGrubRootSearchFileAccepted} = false
+    test ${lib.boolToString (grubRootSearchFileAccepted "/not-efi/marker")} = false
+    test ${lib.boolToString (grubRootSearchFileAccepted "/EFI/BOOT")} = false
     test -e ${customEfiDir}/custom-nixos-installer-image
     grep -F 'search --set=root --file ${customGrubRootSearchFile}' ${customEfiDir}/BOOT/grub.cfg
     touch $out

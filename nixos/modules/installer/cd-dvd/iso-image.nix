@@ -328,7 +328,7 @@ let
         mkdir -p $out/EFI/BOOT
 
         # Add a marker so GRUB can find the filesystem.
-        install -Dm644 /dev/null "$out${config.isoImage.grubRootSearchFile}"
+        install -DTm644 /dev/null "$out${config.isoImage.grubRootSearchFile}"
 
         # ALWAYS required modules.
         MODULES=(
@@ -600,7 +600,9 @@ in
 
     isoImage.grubRootSearchFile = lib.mkOption {
       default = "/EFI/nixos-installer-image";
-      type = lib.types.strMatching "/EFI(/[A-Za-z0-9_+-][A-Za-z0-9._+-]*)+";
+      type = lib.types.addCheck (lib.types.strMatching "/EFI(/[A-Za-z0-9_+-][A-Za-z0-9._+-]*)+") (
+        path: path != "/EFI/BOOT"
+      );
       description = ''
         The path to the marker file used by GRUB to locate the ISO filesystem.
         The path must be a normalized path under {file}`/EFI`, using only
